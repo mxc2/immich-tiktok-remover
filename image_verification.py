@@ -6,6 +6,8 @@ from moviepy.editor import VideoFileClip
 from datetime import datetime
 from python_params import get_config_params
 
+config = get_config_params()
+
 def getRandomFrame(clip):
     duration = clip.duration
     random_time = np.random.uniform(0, duration)  # Generate a random time within the duration
@@ -20,37 +22,47 @@ def getFrameFromEnd(clip):
 #     return clip.audio.nchannels <= 2
 
 def extractFrame(video_path, frameFunction):
-    clip = VideoFileClip(video_path)
-    frame = frameFunction(clip)
-    
-    # Close the clip to release resources
-    clip.close()
-    
-    return frame
+    try:
+        clip = VideoFileClip(video_path)
+        frame = frameFunction(clip)
+        return frame
+    finally:
+        clip.close()
 
 def checkForWatermarkInVideo(frame):
     reader = easyocr.Reader(['en'])
     result = str(reader.readtext(frame))
-    if "TikTok" in result:
+    if config["textToCheckFor"] in result:
         return True
+    
     return False
 
 def verifyVideoNameAndDate(file_name, created_at):
-    config = get_config_params()
-
     # Check file extension
-    if not file_name.lower().endswith(tuple(config["fileTypesToCheckFor"])):
+    if len(config["fileTypesToCheckFor"]) != 0 and not file_name.lower().endswith(tuple(config["fileTypesToCheckFor"])):
         return False
     
-    # Check file name length
-    if len(file_name) != config["fileNameLength"]: return False
+    # Check file name length without extension
+    name_without_extension = ""
+    if config["fileNameLength"] != 0:
+        last_dot_index = file_name.rfind('.')
+        if last_dot_index != -1:
+            name_without_extension = file_name[:last_dot_index]
+        else:
+            name_without_extension = file_name
+        if len(name_without_extension) != config["fileNameLength"]:
+            return False
+        
+    # Check if file name contains of only letters and numbers
+    if config["fileNameIsAlumn"] != False and not name_without_extension.isalnum(): return False
 
     # Check the video creation date
-    video_date = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-    timestamp = video_date.timestamp()
+    if config["fileCreatedAfter"] != 0:
+        video_date = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+        timestamp = video_date.timestamp()
 
-    if timestamp < config["fileCreatedAfter"]:
-        return False
+        if timestamp < config["fileCreatedAfter"]:
+            return False  
     return True
 
 def hasTiktokWatermark(video_path):
@@ -82,8 +94,9 @@ def processVideo(video_content):
         tiktok_file_size = hasTiktokWatermark(temp_file_path)
     except Exception as e:
         print("Error processing video:", e)
+        tiktok_file_size = -1
 
     # Delete the temporary file
     os.unlink(temp_file_path)
     
-    return tiktok_file_size 
+    return tiktok_file_size

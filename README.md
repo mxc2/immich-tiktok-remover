@@ -7,12 +7,19 @@ Despite having approximately 1.2 billion active users per month, TikTok still do
 ## How it works
 Utilizing the Immich API, immich-tiktok-remover checks every uploaded video against a number of requirements (file type, file name length, file name style and file creation date) and if it passes those requirements, then the video is sent trough EasyOCR and checked for a TikTok watermark. If a watermark is found, then said video gets trashed or archived, based on to the user's preferance.
 
+## How good is it?
+In my testing, out of 3569 videos, Immich-Tiktok-Remover found 1953 TikTok videos. After manually going through all my videos, I found that 8 videos were falsely not detected as TikTok. This was mainly caused by the watermark being covered by white text or two TikTok watermarks being on top of each other.
+
+1953 videos correctly detected out of 1961 makes it a 99.5% success rate.
+
+I found no videos that were falsely detected as TikToks.
+
 ## Customization
 Here are all the customization options available for Immich-Tiktok-Remover:
 
 | Command | Description | Type | Default
 | --- | --- | --- | --- |
-| `--output-all` | Outputs every file name that has been checked. Note: Not recommended, will cause tons of spam in console. | Boolean | False |
+| `--output-all` | Outputs every file name that has been checked in EasyOCR. | Boolean | False |
 | `--archive` | Rather than trashing every TikTok video that has been found, this parameter archives found videos. | Boolean | False |
 | `--search-archived` | By default, immich-tiktok-remover searches only for videos that have not been archived. This parameter overrides this. Note: This disables `-archive` parameter | Boolean | False |
 | `--file-types` | By default, immich-tiktok-remover searches only for .mp4 videos. Use this to specify file types for the tool to search for. For example, `--file-types mp4,mov` would search for both .mp4 and .mov files. Setting this to 0, disables this requirement. | List | mp4 |

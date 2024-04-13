@@ -1,6 +1,9 @@
 import requests
 import json
 from dotenv import dotenv_values
+from python_params import get_config_params
+
+params = get_config_params()
 
 # Load environment variables
 config = dotenv_values(".env")
@@ -22,7 +25,12 @@ def pingServer():
     return False
 
 def getAllAssets():
-    url = config.get("DOMAIN") + "api/asset"
+    searchArchived = params["searchArchived"]
+    if searchArchived:
+        url = config.get("DOMAIN") + "api/asset"
+    else:
+        url = config.get("DOMAIN") + "api/asset?isArchived=false"
+        
     API_KEY = config.get("API_KEY")
 
     payload = {}

@@ -1,6 +1,6 @@
 from immich import pingServer
 
-def firstLines():
+def firstIntroductionLines():
     print("\nLooks like this is your first time running this script. Let's set up some things.")
     print("First, we need to set up the configuration file. This file will store your API key and the Immich domain.")
     print("This file will be stored in the same directory as this script.")
@@ -33,7 +33,6 @@ def configureImmich():
     return immich_domain, immich_api_key
 
 def firstTimeRunning():
-    firstLines()
     configureImmich()
 
     print("\nTrying to ping the server to check if everything is working.")
