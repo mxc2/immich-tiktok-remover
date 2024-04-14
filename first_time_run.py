@@ -1,4 +1,5 @@
 from immich import pingServer
+import os
 
 def firstIntroductionLines():
     print("\nLooks like this is your first time running this script. Let's set up some things.")
@@ -40,6 +41,7 @@ def firstTimeRunning():
         pingServer()
         print("Successfully connected to the Immich server. \n")
     except Exception as e:
+        os.remove(".env")
         print("Error while trying to connect to the Immich server.")
         retry = input("Do you want to retry configuration? (yes/no): ")
         if retry.lower() == "yes" or retry.lower() == "y":

@@ -20,6 +20,8 @@ def pingServer():
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
+    print(response) # TODO: Remove this line
+
     if (response.status_code == 200):
         return True
     return False
