@@ -66,22 +66,17 @@ def verifyVideoNameAndDate(file_name, created_at):
     return True
 
 def hasTiktokWatermark(video_path):
-    totalFileSize = 0  # Initialize total file size
-
-    # Get the file size
-    file_size = os.path.getsize(video_path)
-
     # Extract a single frame from the near end of the video
     frame = extractFrame(video_path, getFrameFromEnd)
     if (checkForWatermarkInVideo(frame)):
-        totalFileSize += file_size
+        return 1
 
     # If first check failed, redo test but with a random frame now
     frame = extractFrame(video_path, getRandomFrame)
     if (checkForWatermarkInVideo(frame)):
-        totalFileSize += file_size
+        return 1
 
-    return totalFileSize
+    return 0
     
 def processVideo(video_content):
     # Save video content to a temporary file
@@ -89,14 +84,15 @@ def processVideo(video_content):
         temp_file.write(video_content)
         temp_file_path = temp_file.name
     
+    # is_tiktok would be better as a boolean, might fix in future
     try:        
         # Process the video using has_tiktok_watermark function
-        tiktok_file_size = hasTiktokWatermark(temp_file_path)
+        is_tiktok = hasTiktokWatermark(temp_file_path)
     except Exception as e:
         print("Error processing video:", e)
-        tiktok_file_size = -1
+        is_tiktok = -1
 
     # Delete the temporary file
     os.unlink(temp_file_path)
     
-    return tiktok_file_size
+    return is_tiktok

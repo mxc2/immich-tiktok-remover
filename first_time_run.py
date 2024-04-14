@@ -41,8 +41,7 @@ def firstTimeRunning():
         pingServer()
         print("Successfully connected to the Immich server. \n")
     except Exception as e:
-        os.remove(".env")
-        print("Error while trying to connect to the Immich server.")
+        print("Error while trying to connect to the Immich server: ", e)
         retry = input("Do you want to retry configuration? (yes/no): ")
         if retry.lower() == "yes" or retry.lower() == "y":
             # Retry configuration

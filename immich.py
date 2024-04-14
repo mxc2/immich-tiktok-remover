@@ -5,10 +5,8 @@ from python_params import get_config_params
 
 params = get_config_params()
 
-# Load environment variables
-config = dotenv_values(".env")
-
 def pingServer():
+    config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/server-info/ping"
     API_KEY = config.get("API_KEY")
 
@@ -20,13 +18,12 @@ def pingServer():
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    print(response) # TODO: Remove this line
-
     if (response.status_code == 200):
         return True
     return False
 
 def getAllAssets():
+    config = dotenv_values(".env")
     searchArchived = params["searchArchived"]
     if searchArchived:
         url = config.get("DOMAIN") + "api/asset"
@@ -49,6 +46,7 @@ def getAllAssets():
         print("Error while trying to connect to Immich:", response.text)
 
 def serveVideo(id):
+    config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/asset/file/" + id
     API_KEY = config.get("API_KEY")
 
@@ -66,6 +64,7 @@ def serveVideo(id):
         print("Error while trying to serve video:", response.text)
 
 def trashVideo(id):
+    config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/asset"
     API_KEY = config.get("API_KEY")
 
@@ -90,6 +89,7 @@ def trashVideo(id):
         print("Error while trying to trash video: ", response.text)
         
 def archiveVideo(id):
+    config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/asset"
     API_KEY = config.get("API_KEY")
 
