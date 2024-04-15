@@ -1,6 +1,9 @@
 import sys
 
 def get_config_params():
+    """
+    Retrieves configuration parameters based on command-line arguments and default values.
+    """
     config_params = {
         "outputAllVideos": False,
         "archiveVideos": False,

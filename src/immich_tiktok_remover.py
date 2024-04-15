@@ -1,12 +1,25 @@
+"""
+Script for processing video files from Immich, detecting TikTok videos, and performing actions based on configuration.
+
+This script performs the following tasks:
+1. Checks if it's the first time running the script and performs initial setup if necessary.
+2. Retrieves configuration parameters.
+3. Retrieves all video files from Immich.
+4. Processes each video, checking if it's a TikTok video based on its name and creation date.
+5. Archives or trashes TikTok videos based on configuration.
+6. Outputs the results including the total number of videos processed, TikTok videos detected, total file size of TikTok videos, and any failed videos.
+7. Calculates and outputs the elapsed time for the entire process.
+"""
+
 import time
 import os
 from image_verification import processVideo, verifyVideoNameAndDate
-from immich import getAllAssets, serveVideo, trashVideo, archiveVideo, pingServer #TODO:
+from immich import getAllAssets, serveVideo, trashVideo, archiveVideo
 from python_params import get_config_params
 from first_time_run import firstIntroductionLines, firstTimeRunning
 
 # Check if first time running
-if (not os.path.isfile('.env')):
+if not os.path.isfile('.env'):
     firstIntroductionLines()
     firstTimeRunning()
 
@@ -28,13 +41,13 @@ immichFiles = getAllAssets()
 immichVideos = [file for file in immichFiles if file.get("type") == "VIDEO"]
 
 print("Processing videos. This may take a while...")
-if (not config["outputAllVideos"]):
+if not config["outputAllVideos"]:
     print("Note: Outputting only the filenames of videos detected as TikTok videos. Overridable with --output-all flag. \n \n")
 
 # Process the videos
 for video in immichVideos:
     videoId = video.get("id")
-    if (verifyVideoNameAndDate(video.get("originalFileName"), video.get("fileCreatedAt"))):
+    if verifyVideoNameAndDate(video.get("originalFileName"), video.get("fileCreatedAt")):
         is_tiktok = processVideo(serveVideo(videoId))
         if is_tiktok == 1:
             detectedTikTokVideos += 1
@@ -45,9 +58,9 @@ for video in immichVideos:
             else:
                 trashVideo(videoId)
             continue
-        elif (is_tiktok == 0 and config["outputAllVideos"]):
+        elif is_tiktok == 0 and config["outputAllVideos"]:
             print(f"{video.get('originalFileName')} is not a TikTok video.")
-        elif (is_tiktok == -1):
+        elif is_tiktok == -1:
             failedVideos.append(video.get('originalFileName'))
     noTiktokVideos += 1
 
@@ -58,7 +71,7 @@ print(f"\033[1;32;40mFrom those, {detectedTikTokVideos} were detected as TikTok 
 print(f"\033[1;32;40mTotal file size of TikTok videos: {totalTikTokFileSizeMB:.2f} MB.")
 
 # Output failed videos
-if (len(failedVideos) > 0):
+if len(failedVideos) > 0:
     print("\n\033[1;31;40mThe following videos failed to process:")
     for video in failedVideos:
         print(video)

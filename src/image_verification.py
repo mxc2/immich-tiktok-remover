@@ -1,19 +1,30 @@
+"""
+This module contains functions to verify if a video contains a TikTok watermark.
+It uses the EasyOCR library to perform OCR on the video frames and check for the watermark.
+"""
+
 import os
+import tempfile
+from datetime import datetime
 import numpy as np
 import easyocr
-import tempfile
 from moviepy.editor import VideoFileClip
-from datetime import datetime
 from python_params import get_config_params
 
 config = get_config_params()
 
 def getRandomFrame(clip):
+    """
+    Returns a randomly selected frame from the given video clip.
+    """
     duration = clip.duration
     random_time = np.random.uniform(0, duration)  # Generate a random time within the duration
     return clip.get_frame(random_time)  # Extract frame at the random time
 
 def getFrameFromEnd(clip):
+    """
+    Returns the frame from the end of the given video clip.
+    """
     duration = clip.duration
     return clip.get_frame(duration - 1)  # Extract frame at the specified time
 
@@ -22,6 +33,9 @@ def getFrameFromEnd(clip):
 #     return clip.audio.nchannels <= 2
 
 def extractFrame(video_path, frameFunction):
+    """
+    Extracts a frame from a video using the provided frame extraction function.
+    """
     try:
         clip = VideoFileClip(video_path)
         frame = frameFunction(clip)
@@ -30,18 +44,24 @@ def extractFrame(video_path, frameFunction):
         clip.close()
 
 def checkForWatermarkInVideo(frame):
+    """
+    Checks if a watermark is present in the given frame using OCR.
+    """
     reader = easyocr.Reader(['en'])
     result = str(reader.readtext(frame))
     if config["textToCheckFor"] in result:
         return True
-    
+
     return False
 
 def verifyVideoNameAndDate(file_name, created_at):
+    """
+    Verifies the name and creation date of a video file based on configured parameters.
+    """
     # Check file extension
     if len(config["fileTypesToCheckFor"]) != 0 and not file_name.lower().endswith(tuple(config["fileTypesToCheckFor"])):
         return False
-    
+
     # Check file name length without extension
     name_without_extension = ""
     if config["fileNameLength"] != 0:
@@ -52,9 +72,10 @@ def verifyVideoNameAndDate(file_name, created_at):
             name_without_extension = file_name
         if len(name_without_extension) != config["fileNameLength"]:
             return False
-        
+
     # Check if file name contains of only letters and numbers
-    if config["fileNameIsAlumn"] != False and not name_without_extension.isalnum(): return False
+    is_alnum = name_without_extension.isalnum()
+    if config["fileNameIsAlumn"] != False and not is_alnum: return False
 
     # Check the video creation date
     if config["fileCreatedAfter"] != 0:
@@ -62,30 +83,38 @@ def verifyVideoNameAndDate(file_name, created_at):
         timestamp = video_date.timestamp()
 
         if timestamp < config["fileCreatedAfter"]:
-            return False  
+            return False
     return True
 
 def hasTiktokWatermark(video_path):
+    """
+    Checks if a TikTok watermark is present in the given video. 
+    Failing to find the watermark in the first frame, it will try a random frame.
+    """
     # Extract a single frame from the near end of the video
     frame = extractFrame(video_path, getFrameFromEnd)
-    if (checkForWatermarkInVideo(frame)):
+    if checkForWatermarkInVideo(frame):
         return 1
 
     # If first check failed, redo test but with a random frame now
     frame = extractFrame(video_path, getRandomFrame)
-    if (checkForWatermarkInVideo(frame)):
+    if checkForWatermarkInVideo(frame):
         return 1
 
     return 0
-    
+
 def processVideo(video_content):
+    """
+    Processes the given video content to determine if it contains a TikTok watermark.
+    Failing to process the video will return -1.
+    """
     # Save video content to a temporary file
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         temp_file.write(video_content)
         temp_file_path = temp_file.name
-    
+
     # is_tiktok would be better as a boolean, might fix in future
-    try:        
+    try:
         # Process the video using has_tiktok_watermark function
         is_tiktok = hasTiktokWatermark(temp_file_path)
     except Exception as e:
@@ -94,5 +123,5 @@ def processVideo(video_content):
 
     # Delete the temporary file
     os.unlink(temp_file_path)
-    
+
     return is_tiktok

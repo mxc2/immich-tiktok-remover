@@ -1,7 +1,14 @@
+"""
+Holds functions that are called when the script is run for the first time.
+"""
+
 from immich import pingServer
-import os
 
 def firstIntroductionLines():
+    """
+    Print introduction lines for the first run of the script.
+    """
+
     print("\nLooks like this is your first time running this script. Let's set up some things.")
     print("First, we need to set up the configuration file. This file will store your API key and the Immich domain.")
     print("This file will be stored in the same directory as this script.")
@@ -9,6 +16,13 @@ def firstIntroductionLines():
     print("Don't know where to get a API key? Documentation is here: https://immich.app/docs/features/command-line-interface/#obtain-the-api-key")
 
 def configureImmich():
+    """
+    Configure Immich settings.
+
+    This function prompts the user to enter their Immich URL and API key. 
+    It formats the domain URL and writes the environment variables to the .env file.
+    """
+
     print("\nPlease enter your Immich URL, with http/https and port (e.g. http://192.168.1.4:2283): ")
     immich_domain = input()
     print("Please enter your Immich API key: ")
@@ -25,15 +39,24 @@ def configureImmich():
         "API_KEY": immich_api_key
     }
 
-    # Write the envirohttp://192.168.1.39:2283nment variables to the .env file
-    with open(".env", "w") as env_file:
+    # Write the environment variables to the .env file
+    with open(".env", "w", encoding="utf-8") as env_file:
         for key, value in env_vars.items():
             env_file.write(f"{key}={value}\n")
+
 
     print("Configuration file has been created successfully.")
     return immich_domain, immich_api_key
 
 def firstTimeRunning():
+    """
+    Perform setup and check server connection for first-time run.
+
+    This function calls the 'configureImmich()' function to set up Immich settings.
+    Then it attempts to ping the server to check if the configuration is successful.
+    If there's an error during the connection attempt, it prompts the user to retry configuration.
+    """
+
     configureImmich()
 
     print("\nTrying to ping the server to check if everything is working.")
