@@ -14,6 +14,18 @@ In my testing, out of 3569 videos, Immich-Tiktok-Remover found 1953 TikTok video
 
 I found no videos that were falsely detected as TikToks.
 
+## Usage
+
+Getting this script to run is as easy as one-two-three:
+
+1. **Check Python and pip Installation:** Ensure that Python and pip are installed on your system.
+2. **Download and Navigate:** Download the project and navigate to its directory using your terminal.
+3. **Install Dependencies:** Install the necessary dependencies by executing `pip install -r requirements.txt`.
+4. **Run the Script:** Once dependencies are installed, execute the script using `python ./src/immich_tiktok_remover.py`. You can add parameters to the end of that line f.e. `python ./src/immich_tiktok_remover.py --archive`
+
+### Why no simple download in Releases section? 
+EasyOCR uses a dependency called torch, which is a really big package. The size of the package sadly crosses the maximum file size of Github releases.
+
 ## Customization
 Here are all the customization options available for Immich-Tiktok-Remover:
 
