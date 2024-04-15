@@ -11,10 +11,11 @@ This script performs the following tasks:
 7. Calculates and outputs the elapsed time for the entire process.
 """
 
+import sys
 import time
 import os
 from image_verification import processVideo, verifyVideoNameAndDate
-from immich import getAllAssets, serveVideo, trashVideo, archiveVideo
+from immich import pingServer, getAllAssets, serveVideo, trashVideo, archiveVideo
 from python_params import get_config_params
 from first_time_run import firstIntroductionLines, firstTimeRunning
 
@@ -22,6 +23,13 @@ from first_time_run import firstIntroductionLines, firstTimeRunning
 if not os.path.isfile('.env'):
     firstIntroductionLines()
     firstTimeRunning()
+else:
+    # Check if the server is reachable
+    try:
+        pingServer()
+    except Exception as e:
+        print("Error while trying to connect to Immich. Mabey delete .env file from directory and run script again?")
+        sys.exit()
 
 # Get the configuration parameters
 config = get_config_params()
@@ -37,6 +45,7 @@ start_time = time.time()
 # Get all files from Immich
 print("Getting all video files from Immich...")
 immichFiles = getAllAssets()
+
 # Sort here for only videos, as API itself does not seems to support it
 immichVideos = [file for file in immichFiles if file.get("type") == "VIDEO"]
 

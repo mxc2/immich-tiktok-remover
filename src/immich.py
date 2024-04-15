@@ -54,6 +54,7 @@ def getAllAssets():
         return response.json()
     else:
         print("Error while trying to connect to Immich:", response.text)
+        return None
 
 def serveVideo(id):
     """

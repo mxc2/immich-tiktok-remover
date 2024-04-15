@@ -2,6 +2,7 @@
 Holds functions that are called when the script is run for the first time.
 """
 
+import sys
 from immich import pingServer
 
 def firstIntroductionLines():
@@ -71,4 +72,4 @@ def firstTimeRunning():
             firstTimeRunning()
         else:
             print("Exiting...")
-            exit()
+            sys.exit()
