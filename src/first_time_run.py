@@ -16,6 +16,28 @@ def firstIntroductionLines():
 
     print("Don't know where to get a API key? Documentation is here: https://immich.app/docs/features/command-line-interface/#obtain-the-api-key")
 
+def askForHttpOrHttps(immich_domain: str):
+    """
+    Ask the user to enter http or https for the domain and then return the formatted domain URL.
+    """
+
+    while True:
+        print("\nFor domain you entered:", immich_domain)
+        print("Entered domain does not start with http/https. It is needed for archiving/trashing videos to work. Insert 1 for http, 2 for https: ")
+        http_or_https = input()
+        match http_or_https:
+            case "1":
+                immich_domain = "http://" + immich_domain
+                break
+            case "2":
+                immich_domain = "https://" + immich_domain
+                break
+            case _:
+                print("Invalid input. Trying again...")
+                continue
+
+    return immich_domain
+
 def configureImmich():
     """
     Configure Immich settings.
@@ -31,7 +53,7 @@ def configureImmich():
 
     # Format domain
     if not immich_domain.startswith("http"):
-        immich_domain = "http://" + immich_domain
+        immich_domain = askForHttpOrHttps(immich_domain)
     if not immich_domain.endswith("/"):
         immich_domain += "/"
 

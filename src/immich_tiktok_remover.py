@@ -49,9 +49,9 @@ immichFiles = getAllAssets()
 # Sort here for only videos, as API itself does not seems to support it
 immichVideos = [file for file in immichFiles if file.get("type") == "VIDEO"]
 
-print("Processing videos. This may take a while...")
+print("Processing videos. This may take a while... \n")
 if not config["outputAllVideos"]:
-    print("Note: Outputting only the filenames of videos detected as TikTok videos. Overridable with --output-all flag. \n \n")
+    print("Note: Outputting only the filenames of videos detected as TikTok videos. Overridable with --output-all flag. \n")
 
 # Process the videos
 for video in immichVideos:
@@ -92,3 +92,4 @@ elapsed_time = (end_time - start_time) / 60
 
 print("\033[1;32;40m-" * 50)
 print(f"\033[1;32;40mTime taken: {elapsed_time:.0f} minutes")
+print("\033[0m")

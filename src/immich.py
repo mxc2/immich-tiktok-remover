@@ -56,7 +56,7 @@ def getAllAssets():
         print("Error while trying to connect to Immich:", response.text)
         return None
 
-def serveVideo(id):
+def serveVideo(id: str):
     """
     Serve video content based on the provided ID.
     """
@@ -77,7 +77,7 @@ def serveVideo(id):
     else:
         print("Error while trying to serve video:", response.text)
 
-def trashVideo(id):
+def trashVideo(id: str):
     """
     Trash a video based on the provided ID.
     """
@@ -104,8 +104,9 @@ def trashVideo(id):
         print("Successfully trashed video.")
     else:
         print("Error while trying to trash video: ", response.text)
+        print("\n If this error persists, please check .env file for correct URL and API key.\n")
         
-def archiveVideo(id):
+def archiveVideo(id: str):
     """
     Archive a video based on the provided ID.
     """
@@ -131,3 +132,4 @@ def archiveVideo(id):
         print("Successfully archived video.")
     else:
         print("Error while trying to archive video:", response.text)
+        print("\n If this error persists, please check .env file for correct URL and API key.\n")

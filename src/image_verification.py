@@ -6,6 +6,7 @@ It uses the EasyOCR library to perform OCR on the video frames and check for the
 import os
 import tempfile
 from datetime import datetime
+from typing import Callable
 import numpy as np
 import easyocr
 from moviepy.editor import VideoFileClip
@@ -13,7 +14,7 @@ from python_params import get_config_params
 
 config = get_config_params()
 
-def getRandomFrame(clip):
+def getRandomFrame(clip: VideoFileClip):
     """
     Returns a randomly selected frame from the given video clip.
     """
@@ -21,18 +22,14 @@ def getRandomFrame(clip):
     random_time = np.random.uniform(0, duration)  # Generate a random time within the duration
     return clip.get_frame(random_time)  # Extract frame at the random time
 
-def getFrameFromEnd(clip):
+def getFrameFromEnd(clip: VideoFileClip):
     """
     Returns the frame from the end of the given video clip.
     """
     duration = clip.duration
     return clip.get_frame(duration - 1)  # Extract frame at the specified time
 
-# Currently not used
-# def checkVideoStereo(clip):
-#     return clip.audio.nchannels <= 2
-
-def extractFrame(video_path, frameFunction):
+def extractFrame(video_path: str, frameFunction: Callable[[VideoFileClip], np.ndarray]):
     """
     Extracts a frame from a video using the provided frame extraction function.
     """
@@ -43,7 +40,7 @@ def extractFrame(video_path, frameFunction):
     finally:
         clip.close()
 
-def checkForWatermarkInVideo(frame):
+def checkForWatermarkInVideo(frame: np.ndarray):
     """
     Checks if a watermark is present in the given frame using OCR.
     """
@@ -54,7 +51,7 @@ def checkForWatermarkInVideo(frame):
 
     return False
 
-def verifyVideoNameAndDate(file_name, created_at):
+def verifyVideoNameAndDate(file_name: str, created_at: str):
     """
     Verifies the name and creation date of a video file based on configured parameters.
     """
@@ -86,7 +83,7 @@ def verifyVideoNameAndDate(file_name, created_at):
             return False
     return True
 
-def hasTiktokWatermark(video_path):
+def hasTiktokWatermark(video_path: str):
     """
     Checks if a TikTok watermark is present in the given video. 
     Failing to find the watermark in the first frame, it will try a random frame.
@@ -103,25 +100,28 @@ def hasTiktokWatermark(video_path):
 
     return 0
 
-def processVideo(video_content):
+def processVideo(video_content: bytes):
     """
     Processes the given video content to determine if it contains a TikTok watermark.
     Failing to process the video will return -1.
     """
-    # Save video content to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(video_content)
-        temp_file_path = temp_file.name
+    if not config.get("avoidImageRecognition"):
+        # Save video content to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(video_content)
+            temp_file_path = temp_file.name
 
-    # is_tiktok would be better as a boolean, might fix in future
-    try:
-        # Process the video using has_tiktok_watermark function
-        is_tiktok = hasTiktokWatermark(temp_file_path)
-    except Exception as e:
-        print("Error processing video:", e)
-        is_tiktok = -1
+        # is_tiktok would be better as a boolean, might fix in future
+        try:
+            # Process the video using has_tiktok_watermark function
+            is_tiktok = hasTiktokWatermark(temp_file_path)
+        except Exception as e:
+            print("Error processing video:", e)
+            is_tiktok = -1
 
-    # Delete the temporary file
-    os.unlink(temp_file_path)
-
-    return is_tiktok
+        # Delete the temporary file
+        os.unlink(temp_file_path)
+        return is_tiktok
+    else:
+        # Skip image recognition for archiving/deletion. Return 1 as default.
+        return 1

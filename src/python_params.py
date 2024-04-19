@@ -7,7 +7,7 @@ def get_config_params():
     config_params = {
         "outputAllVideos": False,
         "archiveVideos": False,
-        "avoidImageRecognition": False, # Currently unused
+        "avoidImageRecognition": False, # Skips image recognition for archiving/deletion
         "searchArchived": False,
         "fileTypesToCheckFor": ["mp4"], # Default file type for TikTok videos
         "fileNameLength": 32, # 32 seems to be the length of TikTok video names
@@ -23,7 +23,7 @@ def get_config_params():
     if "--search-archived" in sys.argv:
         config_params["searchArchived"] = True
         config_params["archiveVideos"] = False
-    if "--avoid-image-recognition" in sys.argv: # Currently unused
+    if "--avoid-image-recognition" in sys.argv:
         config_params["avoidImageRecognition"] = True
     if "--file-types" in sys.argv:
         config_params["fileTypesToCheckFor"] = []
