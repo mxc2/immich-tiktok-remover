@@ -31,30 +31,46 @@ def pingServer():
 
 def getAllAssets():
     """
-    Retrieve all assets from the server.
+    Retrieve all assets from the server with paginated requests.
     """
     config = dotenv_values(".env")
     searchArchived = params["searchArchived"]
-    if searchArchived:
-        url = config.get("DOMAIN") + "api/asset"
-    else:
-        url = config.get("DOMAIN") + "api/asset?isArchived=false"
-        
-    API_KEY = config.get("API_KEY")
 
-    payload = {}
+    url = config.get("DOMAIN") + "api/search/metadata"
+    API_KEY = config.get("API_KEY")
+    
     headers = {
         'x-api-key': API_KEY,
+        'Accept': 'application/json',
         'Content-Type': 'application/json'
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    all_assets = []
+    next_page = 1
+    payload = {
+        "type": "VIDEO",
+        "page": 1
+    }
+        
+    if searchArchived:
+        payload["isArchived"] = True
 
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Error while trying to connect to Immich:", response.text)
-        return None
+    while next_page:
+        
+        payload["page"] = next_page
+        response = requests.post(url, headers=headers, json=payload)
+
+        if response.status_code == 200:
+            data = response.json()
+            assets = data.get("assets", {})
+            items = assets.get("items", [])
+            all_assets.extend(items)
+            next_page = assets.get("nextPage")
+        else:
+            print("Error while trying to connect to Immich:", response.text)
+            break
+
+    return all_assets
 
 def serveVideo(id: str):
     """

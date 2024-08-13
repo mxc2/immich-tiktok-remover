@@ -44,10 +44,7 @@ start_time = time.time()
 
 # Get all files from Immich
 print("Getting all video files from Immich...")
-immichFiles = getAllAssets()
-
-# Sort here for only videos, as API itself does not seems to support it
-immichVideos = [file for file in immichFiles if file.get("type") == "VIDEO"]
+immichVideos = getAllAssets()
 
 print("Processing videos. This may take a while... \n")
 if not config["outputAllVideos"]:
