@@ -15,7 +15,7 @@ import sys
 import time
 import os
 from image_verification import processVideo, verifyVideoNameAndDate
-from immich import pingServer, getAllAssets, serveVideo, trashVideo, archiveVideo
+from immich import pingServer, getAllAssets, serveVideo, trashVideo, archiveVideo, getVideoAdditionalData
 from python_params import get_config_params
 from first_time_run import firstIntroductionLines, firstTimeRunning
 
@@ -60,8 +60,11 @@ for video in immichVideos:
         is_tiktok = processVideo(serveVideo(videoId))
         if is_tiktok == 1:
             detectedTikTokVideos += 1
-            totalTikTokFileSize += int(video.get("exifInfo").get("fileSizeInByte"))
-            print(f"{video.get('originalFileName')} is a TikTok video.")
+
+            videoData = getVideoAdditionalData(videoId)
+            totalTikTokFileSize += int(videoData.get("exifInfo").get("fileSizeInByte"))
+
+            print(f"{videoData.get('originalFileName')} detected as a TikTok video.")
             if config["archiveVideos"]:
                 archiveVideo(videoId)
             else:
