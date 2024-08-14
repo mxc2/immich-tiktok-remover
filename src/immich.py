@@ -38,7 +38,7 @@ def getAllAssets():
 
     url = config.get("DOMAIN") + "api/search/metadata"
     API_KEY = config.get("API_KEY")
-
+    
     headers = {
         'x-api-key': API_KEY,
         'Accept': 'application/json',
@@ -51,12 +51,12 @@ def getAllAssets():
         "type": "VIDEO",
         "page": 1
     }
-
+        
     if searchArchived:
         payload["isArchived"] = True
 
     while next_page:
-
+        
         payload["page"] = next_page
         response = requests.post(url, headers=headers, json=payload)
 
@@ -71,7 +71,6 @@ def getAllAssets():
             break
 
     return all_assets
-
 
 
 def serveVideo(id: str):
