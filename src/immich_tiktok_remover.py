@@ -54,7 +54,10 @@ if not config["outputAllVideos"]:
 for video in immichVideos:
     videoId = video.get("id")
     if verifyVideoNameAndDate(video.get("originalFileName"), video.get("fileCreatedAt")):
-        is_tiktok = processVideo(serveVideo(videoId))
+        try:
+            is_tiktok = processVideo(serveVideo(videoId))
+        except:
+            is_tiktok = -1
         if is_tiktok == 1:
             detectedTikTokVideos += 1
 
