@@ -27,7 +27,7 @@ Here are all the customization options available for Immich-Tiktok-Remover:
 | `--file-name-is-not-alumn` | By default, video files that include only alphanumeric characters are considered potential TikTok videos. This parameter overrides that requirement. | Boolean | False |
 | `--file-created-after` | Videos created before September 2016 are ignored. Use this parameter to adjust the timestamp. Note: This parameter only accepts Epoch timestamps. Setting this to 0, disables this requirement. | int | 1472688000 |
 | `--text-to-check` | By default, EasyOCR checks for "TikTok" text in the video. You can change this by using this parameter, i.e. setting this to "Google" searches for text "Google" in videos. If EasyOCR finds the requested text, then that video is trashed/archived | String | TikTok |
-| `--avoid-image-recognition` | Skips the OCR check for a TikTok watermark in video. Makes the tool **much** faster but also is **HIGHLY dangerous**, when not used safely. Only use, when certain that non TikTok videos share TikTok file name style. | Boolean | False |
+| `--avoid-image-recognition` | Skips the OCR check for a TikTok watermark in video. Makes the tool **much** faster but also is **HIGHLY dangerous**, when not used safely. Only use when certain that no non-TikTok videos share TikTok file name style. | Boolean | False |
 
 ### How to use customization arguments
 **Boolean arguments:**
