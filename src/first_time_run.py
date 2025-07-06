@@ -2,7 +2,7 @@
 Holds functions that are called when the script is run for the first time.
 """
 
-import sys
+import sys, os
 from immich import pingServer
 
 def firstIntroductionLines():
@@ -45,6 +45,13 @@ def configureImmich():
     This function prompts the user to enter their Immich URL and API key. 
     It formats the domain URL and writes the environment variables to the .env file.
     """
+
+    if os.environ['IMMICH_URL'] and os.environ['IMMICH_API']:
+        env_file = open(".env", "w")
+        env_string = "DOMAIN={}\nAPI_KEY={}".format(os.environ['IMMICH_URL'], os.environ['IMMICH_API'])
+        env_file.write(env_string)
+        env_file.close()
+        return
 
     print("\nPlease enter your Immich URL, with http/https and port (e.g. http://192.168.1.4:2283): ")
     immich_domain = input()
