@@ -46,12 +46,14 @@ def configureImmich():
     It formats the domain URL and writes the environment variables to the .env file.
     """
 
-    if os.environ['IMMICH_URL'] and os.environ['IMMICH_API']:
+    try:
         env_file = open(".env", "w")
         env_string = "DOMAIN={}\nAPI_KEY={}".format(os.environ['IMMICH_URL'], os.environ['IMMICH_API'])
         env_file.write(env_string)
         env_file.close()
         return
+    except:
+        pass
 
     print("\nPlease enter your Immich URL, with http/https and port (e.g. http://192.168.1.4:2283): ")
     immich_domain = input()

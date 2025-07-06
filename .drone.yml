@@ -1,0 +1,51 @@
+kind: pipeline
+name: default
+
+steps:
+- name: docker build
+  when:
+    branch:
+      include:
+      - master
+      - stable/*
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKERHUB_USER
+    password:
+      from_secret: DOCKERHUB_PASS
+    repo: alyssaholland99/immich-tiktok-remover
+    tags:
+    - stable
+
+- name: docker build (feature)
+  when:
+    branch:
+      include:
+      - feature/*
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKERHUB_USER
+    password:
+      from_secret: DOCKERHUB_PASS
+    repo: alyssaholland99/immich-tiktok-remover
+    tags:
+    - edgerunner
+
+- name: docker build (testing)
+  when:
+    branch:
+      exclude:
+      - master
+      - feature/*
+      - stable/*
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: DOCKERHUB_USER
+    password:
+      from_secret: DOCKERHUB_PASS
+    repo: alyssaholland99/immich-tiktok-remover
+    tags:
+    - testing

@@ -62,7 +62,7 @@ You can now use docker compose to run this project using the following template
 services:
   immich-tiktok-remover:
     container_name: immich-tiktok-remover
-    image: alyssaholland99/immich-tiktok-remover
+    image: alyssaholland99/immich-tiktok-remover:stable
     restart: unless-stopped
     environment:
       IMMICH_URL: "https://immich.yourserver.co.uk/"
@@ -72,6 +72,8 @@ services:
 You'll have to swap out the URL and API key in the above file with ones tied to your server. 
 
 Use `docker compose up -d`  (`docker-compose up -d` on older versions) to pull the image and start the container. 
+
+Last Stable Drone Run: [![Build Status](https://drone.alyssaserver.co.uk/api/badges/alyssaholland99/immich-tiktok-remover/status.svg?ref=refs/heads/stable)](https://drone.alyssaserver.co.uk/alyssaholland99/immich-tiktok-remover)
 
 ## Thanks
 Big thanks for the Immich team for building such a great project.
