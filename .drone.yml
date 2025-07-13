@@ -1,51 +1,157 @@
+---
 kind: pipeline
-name: default
+type: docker
+name: stable
+
+trigger:
+  event:
+    - push
+    - tag
 
 steps:
-- name: docker build
-  when:
-    branch:
-      include:
-      - master
-      - stable/*
-  image: plugins/docker
-  settings:
-    username:
-      from_secret: DOCKERHUB_USER
-    password:
-      from_secret: DOCKERHUB_PASS
-    repo: alyssaholland99/immich-tiktok-remover
-    tags:
-    - stable
+  - name: docker build (stable)
+    when:
+      event:
+        include: [push]
+      branch:
+        include:
+          - master
+          - stable/*
+          - stable-full/*
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - stable
 
-- name: docker build (feature)
-  when:
-    branch:
-      include:
-      - feature/*
-  image: plugins/docker
-  settings:
-    username:
-      from_secret: DOCKERHUB_USER
-    password:
-      from_secret: DOCKERHUB_PASS
-    repo: alyssaholland99/immich-tiktok-remover
-    tags:
-    - edgerunner
+  - name: docker build (stable tag)
+    when:
+      event:
+        include: [tag]
+      ref:
+        include:
+          - refs/tags/v*
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - stable
+        - ${DRONE_TAG}
 
-- name: docker build (testing)
-  when:
-    branch:
-      exclude:
+---
+kind: pipeline
+type: docker
+name: stable-lite
+
+trigger:
+  event:
+    - push
+    - tag
+
+steps:
+  - name: setup lite
+    when:
+      event:
+        include: [push]
+      branch:
+        include:
+          - master
+          - stable/*
+          - stable-lite/*
+    image: plugins/docker
+    commands:
+      - ./make_lite.sh
+
+  - name: docker build (lite)
+    when:
+      event:
+        include: [push]
+      branch:
+        include:
+          - master
+          - stable/*
+          - stable-lite/*
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - stable-lite
+
+  - name: docker build (lite tag)
+    when:
+      event:
+        include: [tag]
+      ref:
+        include:
+          - refs/tags/v*
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - stable-lite
+        - ${DRONE_TAG}
+
+---
+kind: pipeline
+type: docker
+name: other-branches
+
+trigger:
+  event:
+    - push
+  branch:
+    exclude:
       - master
       - feature/*
       - stable/*
-  image: plugins/docker
-  settings:
-    username:
-      from_secret: DOCKERHUB_USER
-    password:
-      from_secret: DOCKERHUB_PASS
-    repo: alyssaholland99/immich-tiktok-remover
-    tags:
-    - testing
+      - stable-lite/*
+      - docker_image_lite
+
+steps:
+  - name: docker build (feature)
+    when:
+      branch:
+        include:
+          - feature/*
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - edgerunner
+
+  - name: docker build (testing)
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PASS
+      repo:
+        from_secret: DOCKERHUB_REPOSITORY
+      tags:
+        - testing

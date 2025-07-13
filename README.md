@@ -14,6 +14,18 @@ In my testing, out of 3569 videos, Immich-Tiktok-Remover found 1953 TikTok video
 
 I found no videos that were falsely detected as TikToks.
 
+## Immich API Key
+How to get your Immich key
+
+1) Go to your Immich server and sign in 
+2) Click your profile in the top right
+3) Click on `Account Settings`
+4) Click `API Keys`
+5) Click `New API Key`
+6) You may need the `all` permissions from Immich 1.137.0 due to API key changes
+7) Click `Create`
+8) Copy the API key and save it for when you need to run the tool
+
 ## Customization
 Here are all the customization options available for Immich-Tiktok-Remover:
 
@@ -68,12 +80,23 @@ services:
       IMMICH_URL: "https://immich.yourserver.co.uk/"
       IMMICH_API: "your-immich-api-key"
       RESTART_TIMEOUT: 3600 # Time in seconds the script waits to restart (default 1hr)
+
+      # Optional command line arguments, explanation can be found at https://github.com/mxc2/immich-tiktok-remover/blob/master/README.md
+      #OUTPUT_ALL=False
+      #ARCHIVE=False
+      #SEARCH_ARCHIVED=False
+      #FILE_TYPES=mp4
+      #FILE_NAME_LENGTH=32
+      #FILE_NAME_IS_NOT_ALUMN=False
+      #FILE_CREATED_AFTER=1472688000
+      #TEXT_TO_CHECK=TikTok
+      #AVOID_IMAGE_RECOGNITION=False  # If you're setting this to False, you may as well just use the 'stable-lite' image which is smaller on your filesystem
 ```
 You'll have to swap out the URL and API key in the above file with ones tied to your server. 
 
 Use `docker compose up -d`  (`docker-compose up -d` on older versions) to pull the image and start the container. 
 
-Last Stable Drone Run: [![Build Status](https://drone.alyssaserver.co.uk/api/badges/alyssaholland99/immich-tiktok-remover/status.svg?ref=refs/heads/stable)](https://drone.alyssaserver.co.uk/alyssaholland99/immich-tiktok-remover)
+Last Stable Drone Run from master branch: [![Build Status](https://drone.alyssaserver.co.uk/api/badges/alyssaholland99/immich-tiktok-remover/status.svg)](https://drone.alyssaserver.co.uk/alyssaholland99/immich-tiktok-remover)
 
 ## Thanks
 Big thanks for the Immich team for building such a great project.

@@ -7,3 +7,14 @@ services:
       IMMICH_URL: "https://immich.yourserver.co.uk/"
       IMMICH_API: "your-immich-api-key"
       RESTART_TIMEOUT: 3600 # Time in seconds the script waits to restart (default 1hr)
+
+      # Optional command line arguments, explanation can be found at https://github.com/mxc2/immich-tiktok-remover/blob/master/README.md
+      #OUTPUT_ALL=False
+      #ARCHIVE=False
+      #SEARCH_ARCHIVED=False
+      #FILE_TYPES=mp4
+      #FILE_NAME_LENGTH=32
+      #FILE_NAME_IS_NOT_ALUMN=False
+      #FILE_CREATED_AFTER=1472688000
+      #TEXT_TO_CHECK=TikTok
+      #AVOID_IMAGE_RECOGNITION=False # If you're setting this to False, you may as well just use the 'stable-lite' image which is smaller on your filesystem
