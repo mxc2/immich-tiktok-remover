@@ -72,6 +72,17 @@ steps:
     commands:
       - ./make_lite.sh
 
+  - name: setup lite (tag)
+    when:
+      event:
+        include: [tag]
+      ref:
+        include:
+          - refs/tags/v*
+    image: plugins/docker
+    commands:
+      - ./make_lite.sh
+
   - name: docker build (lite)
     when:
       event:
@@ -109,7 +120,7 @@ steps:
         from_secret: DOCKERHUB_REPOSITORY
       tags:
         - stable-lite
-        - ${DRONE_TAG}
+        - ${DRONE_TAG}-lite
 
 ---
 kind: pipeline
@@ -128,6 +139,7 @@ trigger:
       - docker_image_lite
 
 steps:
+
   - name: docker build (feature)
     when:
       branch:
@@ -150,7 +162,7 @@ steps:
       username:
         from_secret: DOCKERHUB_USER
       password:
-        from_secret: DOCKERHUB_PASS
+       from_secret: DOCKERHUB_PASS
       repo:
         from_secret: DOCKERHUB_REPOSITORY
       tags:

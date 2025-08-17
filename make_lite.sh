@@ -1,6 +1,5 @@
 sed -i -e 's/easyocr\=\=1\.7\.1/#\ Removed\ EasyOCR/g' requirements.txt
 sed -i -e 's/import\ easyocr/#\ Removed\ EasyOCR/g' src/image_verification.py
-sed -i -e 's/from\ image_verification\ import\ processVideo\,\ verifyVideoNameAndDate/#\ Removed\ EasyOCR/g' src/immich_tiktok_remover.py
 sed -i -e 's/immich\_tiktok\_remover\.py/immich\_tiktok\_remover\.py\ \-\-avoid\-image\-recognition/g' run_docker.sh
 
 echo "requirements.txt"
