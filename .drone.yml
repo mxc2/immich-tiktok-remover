@@ -7,6 +7,9 @@ trigger:
   event:
     - push
     - tag
+    - cron
+  cron:
+    - weekly-build
 
 steps:
   - name: docker build (stable)
@@ -57,6 +60,9 @@ trigger:
   event:
     - push
     - tag
+    - cron
+  cron:
+    - weekly-build
 
 steps:
   - name: setup lite
