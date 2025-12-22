@@ -15,7 +15,12 @@ steps:
   - name: docker build (stable)
     when:
       event:
-        include: [push]
+        include: 
+        - push
+        - cron
+      cron:
+        include:
+        - weekly-build
       branch:
         include:
           - master
@@ -68,7 +73,12 @@ steps:
   - name: setup lite
     when:
       event:
-        include: [push]
+        include: 
+        - push
+        - cron
+      cron:
+        include:
+        - weekly-build
       branch:
         include:
           - master
@@ -81,7 +91,12 @@ steps:
   - name: setup lite (tag)
     when:
       event:
-        include: [tag]
+        include: 
+        - push
+        - cron
+      cron:
+        include:
+        - weekly-build
       ref:
         include:
           - refs/tags/v*
@@ -92,7 +107,12 @@ steps:
   - name: docker build (lite)
     when:
       event:
-        include: [push]
+        include: 
+        - push
+        - cron
+      cron:
+        include:
+        - weekly-build
       branch:
         include:
           - master
