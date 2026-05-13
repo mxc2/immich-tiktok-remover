@@ -94,6 +94,11 @@ services:
 ```
 You'll have to swap out the URL and API key in the above file with ones tied to your server. 
 
+|               Docker Image Description               | Tag for x86_64 CPU  | Tag for ARM CPU |
+| :--------------------------------------------------- | :---------: | --------------: |
+| Includes Machine Learning to detect TikTok watermark | `stable` (~4.1GB) | `stable_arm` (~400MB) |
+| Only uses filename to detect TikTok video            | `stable-lite` (~100MB) | `stable-lite_arm` (~100MB) |
+
 Use `docker compose up -d`  (`docker-compose up -d` on older versions) to pull the image and start the container. 
 
 Last Stable Drone Run from master branch: [![Build Status](https://drone.alyssaserver.co.uk/api/badges/alyssaholland99/immich-tiktok-remover/status.svg)](https://drone.alyssaserver.co.uk/alyssaholland99/immich-tiktok-remover)
