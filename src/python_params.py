@@ -9,13 +9,17 @@ def get_config_params():
         "archiveVideos": False,
         "avoidImageRecognition": False, # Skips image recognition for archiving/deletion
         "searchArchived": False,
-        "fileTypesToCheckFor": ["mp4"], # Default file type for TikTok videos
+        "fileTypesToCheckFor": ["mp4", "png"], # Default file type for TikTok videos
         "fileNameLength": 32, # 32 seems to be the length of TikTok video names
         "fileNameIsAlumn": True,
         "fileCreatedAfter": 1472688000, # 1472688000 is the timestamp for September 1, 2016
         "textToCheckFor": "TikTok",
+        "imageTextToCheckFor" : "@",
+        "checkForTikTokImages" : False
     }
 
+    if "--check-images" in sys.argv:
+        config_params["checkForTikTokImages"] = True
     if "--output-all" in sys.argv:
         config_params["outputAllVideos"] = True
     if "--archive" in sys.argv:

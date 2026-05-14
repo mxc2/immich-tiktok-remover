@@ -51,9 +51,52 @@ def checkForWatermarkInVideo(frame: np.ndarray):
 
     return False
 
+def checkForWatermarkInImage(frame: np.ndarray):
+    """
+    Checks if a watermark is present in the given frame using OCR.
+    """
+    reader = easyocr.Reader(['en'])
+    result = str(reader.readtext(frame))
+    if config["imageTextToCheckFor"] in result:
+        return True
+
+    return False
+
 def verifyVideoNameAndDate(file_name: str, created_at: str):
     """
     Verifies the name and creation date of a video file based on configured parameters.
+    """
+    # Check file extension
+    if len(config["fileTypesToCheckFor"]) != 0 and not file_name.lower().endswith(tuple(config["fileTypesToCheckFor"])):
+        return False
+
+    # Check file name length without extension
+    name_without_extension = ""
+    if config["fileNameLength"] != 0:
+        last_dot_index = file_name.rfind('.')
+        if last_dot_index != -1:
+            name_without_extension = file_name[:last_dot_index]
+        else:
+            name_without_extension = file_name
+        if len(name_without_extension) != config["fileNameLength"]:
+            return False
+
+    # Check if file name contains of only letters and numbers
+    is_alnum = name_without_extension.isalnum()
+    if config["fileNameIsAlumn"] != False and not is_alnum: return False
+
+    # Check the video creation date
+    if config["fileCreatedAfter"] != 0:
+        video_date = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+        timestamp = video_date.timestamp()
+
+        if timestamp < config["fileCreatedAfter"]:
+            return False
+    return True
+
+def verifyImageNameAndDate(file_name: str, created_at: str):
+    """
+    Verifies the name and creation date of an image file based on configured parameters.
     """
     # Check file extension
     if len(config["fileTypesToCheckFor"]) != 0 and not file_name.lower().endswith(tuple(config["fileTypesToCheckFor"])):
@@ -121,6 +164,28 @@ def processVideo(video_content: bytes):
 
         # Delete the temporary file
         os.unlink(temp_file_path)
+        return is_tiktok
+    else:
+        # Skip image recognition for archiving/deletion. Return 1 as default.
+        return 1
+    
+def processImage(image_content: bytes):
+    """
+    Processes the given video content to determine if it contains a TikTok watermark.
+    Failing to process the video will return -1.
+    """
+    if not config.get("avoidImageRecognition"):
+
+        # is_tiktok would be better as a boolean, might fix in future
+        try:
+            # Process the video using has_tiktok_watermark function
+            is_tiktok = 0
+            if checkForWatermarkInImage(image_content) == True:
+                is_tiktok = 1
+        except Exception as e:
+            print("Error processing image:", e)
+            is_tiktok = -1
+
         return is_tiktok
     else:
         # Skip image recognition for archiving/deletion. Return 1 as default.
