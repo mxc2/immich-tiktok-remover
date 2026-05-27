@@ -4,6 +4,7 @@ Holds the logic for interacting with the Immich API.
 
 import requests
 import json
+from datetime import datetime, timezone
 from dotenv import dotenv_values
 from python_params import get_config_params
 
@@ -29,7 +30,7 @@ def pingServer():
         return True
     return False
 
-def getAllAssets():
+def getAllAssets(file_type):
     """
     Retrieve all assets from the server with paginated requests.
     """
@@ -48,8 +49,10 @@ def getAllAssets():
     all_assets = []
     next_page = 1
     payload = {
-        "type": "VIDEO",
-        "page": 1
+        "type": file_type,
+        "page": 1,
+        "withDeleted": False, # Stops already trashed assets from being retrieved
+        "isTrashed": False # Stops already trashed assets from being retrieved
     }
 
     if searchArchived:
@@ -94,6 +97,27 @@ def serveVideo(id: str):
     else:
         print("Error while trying to serve video:", response.text)
 
+def serveImage(id: str):
+    """
+    Serve video content based on the provided ID.
+    """
+    config = dotenv_values(".env")
+    url = config.get("DOMAIN") + "api/assets/" + id + "/original"
+    API_KEY = config.get("API_KEY")
+
+    payload = {}
+    headers = {
+        'x-api-key': API_KEY,
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    if response.status_code == 200:
+        return response.content
+    else:
+        print("Error while trying to serve image:", response.text)
+
 def getVideoAdditionalData(id: str):
     """
     Get additional data about video
@@ -115,10 +139,11 @@ def getVideoAdditionalData(id: str):
     else:
         print("Error while trying to get video data:", response.text)
 
-def trashVideo(id: str):
+def trashAsset(id: str):
     """
     Trash a video based on the provided ID.
     """
+
     config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/assets"
     API_KEY = config.get("API_KEY")
@@ -139,15 +164,16 @@ def trashVideo(id: str):
     response = requests.delete(url, headers=headers, data=json_payload)
 
     if response.status_code == 204:
-        print("Successfully trashed video.")
+        print("Successfully trashed asset.")
     else:
-        print("Error while trying to trash video: ", response.text)
+        print("Error while trying to trash asset: ", response.text)
         print("\n If this error persists, please check .env file for correct URL and API key.\n")
 
-def archiveVideo(id: str):
+def archiveAsset(id: str):
     """
     Archive a video based on the provided ID.
     """
+    
     config = dotenv_values(".env")
     url = config.get("DOMAIN") + "api/assets"
     API_KEY = config.get("API_KEY")
@@ -167,7 +193,7 @@ def archiveVideo(id: str):
     response = requests.request("PUT", url, headers=headers, data=json_payload)
 
     if response.status_code == 204:
-        print("Successfully archived video.")
+        print("Successfully archived asset.")
     else:
-        print("Error while trying to archive video:", response.text)
+        print("Error while trying to archive asset:", response.text)
         print("\n If this error persists, please check .env file for correct URL and API key.\n")
